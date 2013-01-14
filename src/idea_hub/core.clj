@@ -33,7 +33,8 @@
   (let [column (select root [:#ready])
         btn  (select root [:#add-item])]
     (listen btn :action (fn [e] (let [todos (config column :items)]
-                                  (config! column :items (conj todos (make-item )))))))
+                                  (config! column :items (conj todos (make-item)))
+                                  (pack! root)))))
 
   root)
 
