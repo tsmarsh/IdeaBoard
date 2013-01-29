@@ -16,17 +16,18 @@
 		:border (line-border)
 		:columns 15))
 
-(defn make-column []
-	(let [col (vertical-panel :class :todos)
+(defn make-column [name]
+	(let [col (vertical-panel :class :col)
 		  btn (button :class :add-item
                       :text "+"
                       :listen [:action (fn [e] 
-                              	(config! col :items (conj (config col :items) (make-item))))])]
+                      						(let [todos (first (select col [:.todos]))]
+                      							(config! todos :items (conj (config todos :items) (make-item)))))])]
 
-		(config! col :items (conj (config col :items) btn))))
+		(config! col :items (conj (config col :items) btn (vertical-panel :class :todos) (text :text name)))))
 
 (defn make-content [] 
-	(flow-panel :items [(button :id :add-column :text "Add column") (make-column)]))
+	(flow-panel :items [(button :id :add-column :text "Add column") (make-column "Todo")]))
 
 (defn make-frame []
 	(frame
