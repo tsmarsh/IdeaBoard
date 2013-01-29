@@ -17,11 +17,16 @@
 		:columns 15))
 
 (defn make-column []
-	(vertical-panel :id :ready :items [(button :id :add-item
-                                  :text "+")]))
+	(let [col (vertical-panel :class :todos)
+		  btn (button :class :add-item
+                      :text "+"
+                      :listen [:action (fn [e] 
+                              	(config! col :items (conj (config col :items) (make-item))))])]
+
+		(config! col :items (conj (config col :items) btn))))
 
 (defn make-content [] 
-	(flow-panel :items [(make-column)]))
+	(flow-panel :items [(button :id :add-column :text "Add column") (make-column)]))
 
 (defn make-frame []
 	(frame
@@ -29,16 +34,7 @@
 		:on-close :exit
 		:content (make-content)))
 
-(defn add-behaviour [root]
-  (let [column (select root [:#ready])
-        btn  (select root [:#add-item])]
-    (listen btn :action (fn [e] (let [todos (config column :items)]
-                                  (config! column :items (conj todos (make-item)))
-                                  (pack! root)))))
-
-  root)
-
 (defn -main [& args]
-		(invoke-soon(-> (make-frame) (add-behaviour ) pack! show!)))
+		(invoke-soon(-> (make-frame) pack! show!)))
 	
 	
