@@ -27,15 +27,25 @@
 		(config! col :items (conj (config col :items) btn (vertical-panel :class :todos) (text :text name)))))
 
 (defn make-content [] 
-	(flow-panel :items [(button :id :add-column :text "Add column") (make-column "Todo")]))
+	(let [col-panel (flow-panel :align :left)
+		  btn (button 	:id :add-column 
+						:text "Add column" 
+						:listen [:action (fn [e]
+											(config! col-panel :items (conj (config col-panel :items) (make-column "New…"))))])]
+	(border-panel 	:north (horizontal-panel :items [(label "I should be a title")]) 
+				  	:east btn
+				  	:center col-panel)))
+
 
 (defn make-frame []
 	(frame
 		:title "Idea Hub"
 		:on-close :exit
-		:content (make-content)))
+		:content (make-content)
+		:height 300
+		:width 400))
 
 (defn -main [& args]
-		(invoke-soon(-> (make-frame) pack! show!)))
+		(invoke-soon(-> (make-frame) show!)))
 	
 	
