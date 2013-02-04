@@ -22,7 +22,7 @@
                       :text "+"
                       :listen [:action (fn [e] 
                       						(let [todos (first (select col [:.todos]))]
-                      							(config! todos :items (conj (config todos :items) (make-item)))))])]
+                      							(config! todos :items (concat (config todos :items) [(make-item)]))))])]
 
    (config! col :items (conj (config col :items) (vertical-panel :class :todos)))
    (scrollable col :column-header (flow-panel :items [(text	:text name) btn]))))
@@ -32,7 +32,7 @@
 		  btn (button 	:id :add-column 
 						:text "Add column" 
 						:listen [:action (fn [e]
-											(config! col-panel :items (conj (config col-panel :items) (make-column "New…"))))])]
+											(config! col-panel :items (concat (config col-panel :items) [(make-column "New…")])))])]
    
    (border-panel 	:north (horizontal-panel :items [(label :text "Board"
                                                           :font  (seesaw.font/font	:name "ARIAL" 
