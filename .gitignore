@@ -12,3 +12,5 @@ pom.xml
 *.iml
 *.ipr
 *.iws
+.project
+.settings/org.eclipse.core.resources.prefs
