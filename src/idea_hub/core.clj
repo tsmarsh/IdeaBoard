@@ -8,14 +8,13 @@
 (javax.swing.UIManager/setLookAndFeel "org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel")
 
 (defn make-item []
-	(vertical-panel :items [
+	(flow-panel :items [
 				(text 	:multi-line? true
 						:wrap-lines? true
 						:rows 10
 						:margin [20 20 20 20]
 						:border (line-border)
-						:columns 15)
-		]))
+						:columns 15)]))
 
 (defn make-column [name]
 	(let [col (vertical-panel 	:class :col)
@@ -25,7 +24,8 @@
                       						(let [todos (first (select col [:.todos]))]
                       							(config! todos :items (conj (config todos :items) (make-item)))))])]
 
-		(config! col :items (conj (config col :items) btn (vertical-panel :class :todos) (text	:text name)))))
+   (config! col :items (conj (config col :items) (vertical-panel :class :todos)))
+   (scrollable col :column-header (flow-panel :items [(text	:text name) btn]))))
 
 (defn make-content [] 
 	(let [col-panel (horizontal-panel)
@@ -33,13 +33,13 @@
 						:text "Add column" 
 						:listen [:action (fn [e]
 											(config! col-panel :items (conj (config col-panel :items) (make-column "New…"))))])]
-	(border-panel 	:north (horizontal-panel :items [(label		:text "Board"
-																:font  (seesaw.font/font	:name "ARIAL" 
-																							:style :bold
-																							:size 18))]) 
-				  	:east (vertical-panel :items [btn])
-				  	:center col-panel)))
-
+   
+   (border-panel 	:north (horizontal-panel :items [(label :text "Board"
+                                                          :font  (seesaw.font/font	:name "ARIAL" 
+                                                                                    :style :bold
+                                                                                    :size 18))]) 
+                  :east (vertical-panel :items [btn])
+                  :center col-panel)))
 
 (defn make-frame []
 	(frame
