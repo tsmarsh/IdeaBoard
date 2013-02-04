@@ -7,13 +7,14 @@
 
 (javax.swing.UIManager/setLookAndFeel "org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel")
 
-(def model {:lists [{:name "Dev Ready" :items ["Story one" "Story two" "Story three"]} 
-                    {:name "In development" :items ["Story four" "Story five"]}
-                    {:name "Done" :items ["A completed story"]}]})
+(def model {:lists [{:name "Dev Ready" :items [{:text "Story one"}{:text "Story two"} {:text "Story three"} ]} 
+                    {:name "In development" :items [{:text "Story four"} {:text "Story five"}]}
+                    {:name "Done" :items [{:text "A completed story"}]}]})
 
-(defn make-item []
+(defn make-item [item]
 	(flow-panel :items [
-				(text 	:multi-line? true
+				(text :text (:text item)	
+          :multi-line? true
 						:wrap-lines? true
 						:rows 10
 						:margin [20 20 20 20]
@@ -26,9 +27,10 @@
                       :text "+"
                       :listen [:action (fn [e] 
                       						(let [todos (first (select col [:.todos]))]
-                      							(config! todos :items (concat (config todos :items) [(make-item)]))))])]
+                      							(config! todos :items (concat (config todos :items) [(make-item {})]))))])
+    items (map #(make-item %) (:items column))]
 
-   (config! col :items (conj (config col :items) (vertical-panel :class :todos)))
+   (config! col :items (conj (config col :items) (vertical-panel :class :todos :items items)))
    (scrollable col :column-header (flow-panel :items [(text	:text (:name column)) btn]))))
 
 (defn make-content [model] 
