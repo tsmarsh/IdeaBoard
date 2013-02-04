@@ -7,6 +7,10 @@
 
 (javax.swing.UIManager/setLookAndFeel "org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel")
 
+(def model {:lists [{:name "Dev Ready" :items ["Story one" "Story two" "Story three"]} 
+                    {:name "In development" :items ["Story four" "Story five"]}
+                    {:name "Done" :items ["A completed story"]}]})
+
 (defn make-item []
 	(flow-panel :items [
 				(text 	:multi-line? true
@@ -16,7 +20,7 @@
 						:border (line-border)
 						:columns 15)]))
 
-(defn make-column [name]
+(defn make-column [column]
 	(let [col (vertical-panel 	:class :col)
 		  btn (button :class :add-item
                       :text "+"
@@ -25,10 +29,10 @@
                       							(config! todos :items (concat (config todos :items) [(make-item)]))))])]
 
    (config! col :items (conj (config col :items) (vertical-panel :class :todos)))
-   (scrollable col :column-header (flow-panel :items [(text	:text name) btn]))))
+   (scrollable col :column-header (flow-panel :items [(text	:text (:name column)) btn]))))
 
-(defn make-content [] 
-	(let [col-panel (horizontal-panel)
+(defn make-content [model] 
+	(let [col-panel (horizontal-panel :items (map #(make-column %) (:lists model)))
 		  btn (button 	:id :add-column 
 						:text "Add column" 
 						:listen [:action (fn [e]
@@ -41,15 +45,15 @@
                   :east (vertical-panel :items [btn])
                   :center col-panel)))
 
-(defn make-frame []
+(defn make-frame [model]
 	(frame
 		:title "Idea Hub"
 		:on-close :exit
-		:content (make-content)
+		:content (make-content model)
 		:height 300
 		:width 400))
 
 (defn -main [& args]
-		(invoke-soon(-> (make-frame) show!)))
+		(invoke-soon(-> (make-frame model) show!)))
 	
 	
