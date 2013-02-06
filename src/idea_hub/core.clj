@@ -7,13 +7,13 @@
 
 (javax.swing.UIManager/setLookAndFeel "org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel")
 
-(def model {:lists [{:name "Dev Ready" :items [{:text "Story one"}{:text "Story two"} {:text "Story three"} ]} 
-                    {:name "In development" :items [{:text "Story four"} {:text "Story five"}]}
-                    {:name "Done" :items [{:text "A completed story"}]}]})
+(def model (ref {:lists [(ref {:name "Dev Ready" :items [(ref {:text "Story one"}) (ref {:text "Story two"}) (ref {:text "Story three"}) ]})  
+                         (ref {:name "In development" :items [(ref {:text "Story four"}) (ref {:text "Story five"})]})
+                         (ref {:name "Done" :items [(ref {:text "A completed story"})]})]}))
 
 (defn make-item [item]
 	(flow-panel :items [
-				(text :text (:text item)	
+				(text :text (:text @item)	
           :multi-line? true
 						:wrap-lines? true
 						:rows 10
@@ -26,19 +26,20 @@
 		  btn (button :class :add-item
                       :text "+"
                       :listen [:action (fn [e] 
-                      						(let [todos (first (select col [:.todos]))]
-                      							(config! todos :items (concat (config todos :items) [(make-item {})]))))])
-    items (map #(make-item %) (:items column))]
+                                         (let [todos (first (select col [:.todos]))]
+                                           (config! todos :items (concat (config todos :items) [(make-item (ref {:text ""}))]))))])
+    items (map #(make-item %) (:items @column))]
+                      
 
    (config! col :items (conj (config col :items) (vertical-panel :class :todos :items items)))
-   (scrollable col :column-header (flow-panel :items [(text	:text (:name column)) btn]))))
+   (scrollable col :column-header (flow-panel :items [(text	:text (:name @column)) btn]))))
 
 (defn make-content [model] 
-	(let [col-panel (horizontal-panel :items (map #(make-column %) (:lists model)))
+	(let [col-panel (horizontal-panel :items (map #(make-column %) (:lists @model)))
 		  btn (button 	:id :add-column 
 						:text "Add column" 
 						:listen [:action (fn [e]
-											(config! col-panel :items (concat (config col-panel :items) [(make-column "New…")])))])]
+											(config! col-panel :items (concat (config col-panel :items) [(make-column (ref {:name "New" :items []}))])))])]
    
    (border-panel 	:north (horizontal-panel :items [(label :text "Board"
                                                           :font  (seesaw.font/font	:name "ARIAL" 
